@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
@@ -41,7 +41,7 @@ sub FETCH {
   # Into key stands by 1 blank separate the value and the quantification string.
   my ($number, $strings) = split / /, $key, 2;
   # Quantification string is separated by comma respectively.
-  my @string = split ',', $strings;
+  my @string = split /,/, $strings;
   # auto_nbsp_flag1
   if (defined $self->{auto_nbsp_flag1} and length $self->{auto_nbsp_flag1}) {
     $string[0] = $self->{nbsp_flag}.$string[0];
@@ -55,7 +55,7 @@ sub FETCH {
   };
   $@ and croak $@;
   # By the translation the "nbsp_flag" becomes blank put respectively behind one.
-  # These so highlighted blanks are changed after the translation into the value of "nbsp".
+  # These so highlighted blanks are substituted after the translation into the value of "nbsp".
   if (defined $self->{nbsp_flag} and length $self->{nbsp_flag}) {
     s/ \Q$self->{nbsp_flag}\E/$self->{nbsp}/g;
   }
@@ -101,7 +101,7 @@ Locale::Maketext::TieHash::quant - Tying method quant to a hash
  @quant{qw/nbsp_flag auto_nbsp_flag1 auto_nbsp_flag2/} = qw(~ 1 1);
  ...
  my $part = 5000.5;
- print qq~$mt{Example}:\n$quant{"$part ".$lh->maketext('part,parts,no part')}\n~;
+ print qq~$mt{Example}:\n$quant{$part.' '.$lh->maketext('part,parts,no part')}\n~;
 
 =head2 if you use Locale::Maketext::TieHash::L10N
 
@@ -144,7 +144,68 @@ At long last this is the same, only the notation is shorter.
 You can use the module also without Locale::Maketext::TieHash::L10N.
 Whether this is better for you, have decide you.
 
+=head1 METHODS
+
+=head2 TIEHASH
+
+ use Locale::Maketext::TieHash::quant;
+ tie my %quant, 'Locale::Maketext::TieHash::quant';
+
+C<">TIEHASHC<"> ties your hash and set options defaults.
+
+=head2 STORE
+
+C<">STOREC<"> stores the language handle or options.
+
+ # store the language handle
+ $quant{L10N} = $lh;
+
+ # store option of language handle
+ $quant{numf_comma} = 1;
+ # the same is:
+ $lh->{numf_comma} = 1;
+
+ # only for debugging your HTML response
+ $quant{nbsp} = 'see_position_of_nbsp_in_HTML_response';   # default is '&nbsp;'
+ 
+ # Set a flag to say:
+ #  Substitute the whitespace before this flag and this flag to '&nbsp;' or your debugging string.
+ # The "nbsp_flag" is a string (1 or more characters).
+ $quant{nbsp_flag} = '~';
+
+ # You get the string "singular,plural,negative" from any data base.
+ $quant{auto_nbsp_flag1} = 1;   # As if the "nbsp_flag" in front of "singular" would stand.
+ $quant{auto_nbsp_flag2} = 1;   # As if the "nbsp_flag" in front of "plural" would stand.
+
+The method calls croak, if the key of your hash is undef or your key isn't correct
+and if the value, you set to option C<">nbspC<">, is undef. 
+
+=head2 FETCH
+
+C<">FETCHC<"> quantifying the given key of your hash and give back the translated string as value.
+
+ # quantifying
+ print $quant{"$number singular,plural,negative"};
+ # the same is:
+ print $lh->quant($number, 'singular', 'plural', 'negative');
+ ...
+ # Use "nbsp" and "nbsp_flag", "auto_nbsp_flag1" and "auto_nbsp_flag2" are true.
+ print $quant{"$number singular,plural,negative"};
+ # the same is:
+ my $result = $lh->quant($number, '~'.'singular', '~'.'plural', 'negative');
+ $result =~ s/ ~/&nbsp;/g;   # But not a global debugging function is available.
+
+The method calls croak, if the method C<">quantC<"> of your stored language handle dies.
+
+=head2 Get
+
+Submit 1 key or more. The method C<">GetC<"> give you the values back.
+
+The method calls croak if a key is undef or unknown.
+
 =head1 SEE ALSO
+
+Tie::Hash
 
 Locale::Maketext
 

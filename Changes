@@ -4,3 +4,6 @@ Revision history for Perl extension Locale::Maketext::TieHash::quant.
 	- original version; created by h2xs 1.23 with options
 		-XA -n Locale::Maketext::TieHash::quant
 
+0.02  Sun Jan  9 21:45:01 2005
+	- only pod-documentation is expanded
+
