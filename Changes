@@ -13,3 +13,9 @@ Revision history for Perl extension Locale::Maketext::TieHash::quant.
           - option nbsp_flag is undef
           - option auto_nbsp_flag1 and/or auto_nbsp_flag2 ist true
 
+0.04  Sun Feb 13 14:11:00 2005
+	- new Method Config
+        - Methods deprecated
+          - STORE
+          - Get
+

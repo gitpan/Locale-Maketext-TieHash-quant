@@ -5,32 +5,43 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
 
 sub TIEHASH {
-  bless {nbsp => '&nbsp;'}, shift;
+  my $self = bless {}, shift;
+  $self->Config(nbsp => '&nbsp;', @_);
+  $self;
 }
 
-# store language handle or options
-sub STORE {
-  # Object, Key, Value
-  my ($self, $key, $value) = @_;
-  unless ($key) {
-    croak 'key is not true';
+# configure
+sub Config {
+  # Object, Parameter Hash
+  my $self = shift;
+  while (@_) {
+    my ($key, $value) = (shift(), shift);
+    unless ($key) {
+      croak 'key is not true';
+    }
+    elsif ($key =~ /^(?:L10N|nbsp|nbsp_flag|auto_nbsp_flag[12])$/) {
+      $key eq 'nbsp' and (defined $value or croak "key is 'nbsp', value is undef");
+      $self->{$key} = $value;
+    }
+    elsif ($key eq 'numf_comma') {
+      $self->{L10N}->{numf_comma} = $value;
+    }
+    else {
+      croak "key is not 'L10N' or 'nbsp' or 'numf_comma' or 'nbsp_flag' or 'auto_nbsp_flag1' or 'auto_nbsp_flag2'";
+    }
   }
-  elsif ($key =~ /^(?:L10N|nbsp|nbsp_flag|auto_nbsp_flag[12])$/) {
-    $key eq 'nbsp' and (defined $value or croak "key is 'nbsp', value is undef");
-    $self->{$key} = $value;
-  }
-  elsif ($key eq 'numf_comma') {
-    $self->{L10N}->{numf_comma} = $value;
-  }
-  else {
-    croak "key is not 'L10N' or 'nbsp' or 'numf_comma' or 'nbsp_flag' or 'auto_nbsp_flag1' or 'auto_nbsp_flag2'";
-  }
+  defined wantarray or return;
+  ( %{$self},
+    exists $self->{L10N}
+    ? (numf_comma => $self->{L10N}->{numf_comma})
+    : (),
+  );
 }
 
 # quantification
@@ -42,8 +53,8 @@ sub FETCH {
   my ($number, $strings) = split / /, $key, 2;
   # Quantification string is separated by comma respectively.
   my @string = split /,/, $strings;
-  if (defined $self->{nbsp_flag})
-  { # auto_nbsp_flag1
+  if (defined $self->{nbsp_flag}) {
+    # auto_nbsp_flag1
     if (defined $self->{auto_nbsp_flag1} and length $self->{auto_nbsp_flag1}) {
       $string[0] = $self->{nbsp_flag}.$string[0];
     }
@@ -64,15 +75,20 @@ sub FETCH {
   $_;
 }
 
-# get values
+# store language handle or options (deprecated)
+sub STORE {
+  # Object, Key, Value
+  my ($self, $key, $value) = @_;
+  $self->Config($key => $value);
+}
+
+# get values (deprecated)
 sub Get {
   my $self = shift;
-  my @rv;
   for (@_) {
-    $_ or croak "Get(undef) detected";
-    /^(?:L10N|nbsp|nbsp_flag|auto_nbsp_flag[12])$/ or croak "unknown '$_'";
-    push @rv, $self->{$_};
+    $_ or croak 'key is not true';
   }
+  my @rv = @{{$self->Config}}{@_};
   return wantarray ? @rv : $rv[0];
 }
 
@@ -89,18 +105,26 @@ Locale::Maketext::TieHash::quant - Tying method quant to a hash
 
  use strict;
  use Locale::Maketext::TieHash::quant;
- tie my %quant, 'Locale::Maketext::TieHash::quant';
+ my %quant;
  { use MyProgram::L10N;
    my $lh = MyProgram::L10N->get_handle() || die "What language?";
-   # store language handle
-   $quant{L10N} = $lh;
+   # tie and configure
+   tie %quant, 'Locale::Maketext::TieHash::quant',
+     L10N       => $lh,   # save language handle
+     numf_comma => 1,     # set option numf_comma
+   ;
  }
- # store option numf_comma
- $quant{numf_comma} = 1;
  ...
  # if you use HTML
- # store "nbsp_flag", "auto_nbsp_flag1" and "auto_nbsp_flag2"
- @quant{qw/nbsp_flag auto_nbsp_flag1 auto_nbsp_flag2/} = qw(~ 1 1);
+ # configure "nbsp_flag", "auto_nbsp_flag1" and "auto_nbsp_flag2"
+ tied(%quant)->Config(
+   nbsp_flag       => '~',   # set flag to mark whitespaces
+   auto_nbsp_flag1 => 1,     # set flag to use "nbsp_flag" at the singular automatically
+   auto_nbsp_flag2 => 1,     # set flag to use "nbsp_flag" at the plural automatically
+   # If you want to test your Script,
+   # you set "nbsp" on a string which you see in the Browser.
+   nbsp            => '<span style="color:red">§</span>',
+ ;
  ...
  my $part = 5000.5;
  print qq~$mt{Example}:\n$quant{$part.' '.$lh->maketext('part,parts,no part')}\n~;
@@ -109,27 +133,30 @@ Locale::Maketext::TieHash::quant - Tying method quant to a hash
 
  use strict;
  use Locale::Maketext::TieHash::L10N;
- tie my %mt, 'Locale::Maketext::TieHash::L10N';
- use Locale::Maketext::TieHash::quant;
- tie my %quant, 'Locale::Maketext::TieHash::quant';
+ my %mt;
  { use MyProgram::L10N;
    my $lh = MyProgram::L10N->get_handle() || die "What language?";
-   # store language handle
-   $mt{L10N} = $lh;
+   tie %mt, 'Locale::Maketext::TieHash::L10N', L10N => $lh, numf_comma => 1;
  }
- # store option numf_comma
- $mt{numf_comma} = 1;
- # only if you use HTML: store option nbsp_flag
- $mt{nbsp_flag} = '~';
- # copy settings
- @quant{tied(%mt)->Keys} = tied(%mt)->Values;
- ...
- # if you use HTML
- # store option auto_nbsp_flag1 and auto_nbsp_flag2
- @quant{qw/auto_nbsp_flag1 auto_nbsp_flag2/} = (1, 1);
+ use Locale::Maketext::TieHash::quant;
+ tie my %quant, 'Locale::Maketext::TieHash::quant',
+   tied(%mt)->Config(),   # get back and set language handle and option
+   # only if you use HTML
+   nbsp_flag => '~',
+   auto_nbsp_flag1 => 1,
+   auto_nbsp_flag2 => 1,
+ ;
  ...
  my $part = 5000.5;
  print qq~$mt{Example}:\n$quant{"$part $mt{'part,parts,no part'}"}\n~;
+
+=head2 read Configuration
+
+ my %config = tied(%quant)->Config();
+
+=head2 write Configuration
+
+ my %config = tied(%quant)->Config(numf_comma => 0, nbsp_flag => '');
 
 =head2 get the language handle C<">L10NC<">, C<">nbspC<">, C<">nbsp_flagC<">, C<">auto_nbsp_flag1C<"> and/or C<">auto_nbsp_flag2C<"> back
 
@@ -151,36 +178,40 @@ Whether this is better for you, have decide you.
 =head2 TIEHASH
 
  use Locale::Maketext::TieHash::quant;
- tie my %quant, 'Locale::Maketext::TieHash::quant';
+ tie my %quant, 'Locale::Maketext::TieHash::quant', %config;
 
 C<">TIEHASHC<"> ties your hash and set options defaults.
 
-=head2 STORE
+=head2 Config
 
-C<">STOREC<"> stores the language handle or options.
+C<">ConfigC<"> configures the language handle and/or options.
 
- # store the language handle
- $quant{L10N} = $lh;
+ # configure the language handle
+ tied(%quant)->Config(L10N => $lh);
 
- # store option of language handle
- $quant{numf_comma} = 1;
+ # configure option of language handle
+ tied(%quant)->Config(numf_comma => 1);
  # the same is:
  $lh->{numf_comma} = 1;
 
  # only for debugging your HTML response
- $quant{nbsp} = 'see_position_of_nbsp_in_HTML_response';   # default is '&nbsp;'
- 
+ tied(%quant)->Config(nbsp => 'see_position_of_nbsp_in_HTML_response');   # default is '&nbsp;'
+
  # Set a flag to say:
  #  Substitute the whitespace before this flag and this flag to '&nbsp;' or your debugging string.
  # The "nbsp_flag" is a string (1 or more characters).
- $quant{nbsp_flag} = '~';
+ tied(%quant)->Config(nbsp_flag => '~');
 
  # You get the string "singular,plural,negative" from any data base.
- $quant{auto_nbsp_flag1} = 1;   # As if the "nbsp_flag" in front of "singular" would stand.
- $quant{auto_nbsp_flag2} = 1;   # As if the "nbsp_flag" in front of "plural" would stand.
+ # - As if the "nbsp_flag" in front of "singular" would stand.
+ tied(%quant)->Config(auto_nbsp_flag1 => 1);
+ # - As if the "nbsp_flag" in front of "plural" would stand.
+ tied(%quant)->Config(auto_nbsp_flag2 => 1);
 
 The method calls croak, if the key of your hash is undef or your key isn't correct
-and if the value, you set to option C<">nbspC<">, is undef. 
+and if the value, you set to option C<">nbspC<">, is undef.
+
+C<">ConfigC<"> accepts all parameters as Hash and gives a Hash back with all attitudes.
 
 =head2 FETCH
 
@@ -199,7 +230,34 @@ C<">FETCHC<"> quantifying the given key of your hash and give back the translate
 
 The method calls croak, if the method C<">quantC<"> of your stored language handle dies.
 
-=head2 Get
+=head2 STORE (deprecated)
+
+C<">STOREC<"> stores the language handle or options.
+
+ # store the language handle
+ $quant{L10N} = $lh;
+
+ # store option of language handle
+ $quant{numf_comma} = 1;
+ # the same is:
+ $lh->{numf_comma} = 1;
+
+ # only for debugging your HTML response
+ $quant{nbsp} = 'see_position_of_nbsp_in_HTML_response';   # default is '&nbsp;'
+
+ # Set a flag to say:
+ #  Substitute the whitespace before this flag and this flag to '&nbsp;' or your debugging string.
+ # The "nbsp_flag" is a string (1 or more characters).
+ $quant{nbsp_flag} = '~';
+
+ # You get the string "singular,plural,negative" from any data base.
+ $quant{auto_nbsp_flag1} = 1;   # As if the "nbsp_flag" in front of "singular" would stand.
+ $quant{auto_nbsp_flag2} = 1;   # As if the "nbsp_flag" in front of "plural" would stand.
+
+The method calls croak, if the key of your hash is undef or your key isn't correct
+and if the value, you set to option C<">nbspC<">, is undef.
+
+=head2 Get (deprecated)
 
 Submit 1 key or more. The method C<">GetC<"> give you the values back.
 

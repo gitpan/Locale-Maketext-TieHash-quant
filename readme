@@ -1,4 +1,4 @@
-Locale-Maketext-TieHash-quant version 0.02
+Locale-Maketext-TieHash-quant version 0.04
 ==========================================
 
 Object methods like quant don't have interpreted into strings.
