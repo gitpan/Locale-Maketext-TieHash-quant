@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
@@ -42,13 +42,15 @@ sub FETCH {
   my ($number, $strings) = split / /, $key, 2;
   # Quantification string is separated by comma respectively.
   my @string = split /,/, $strings;
-  # auto_nbsp_flag1
-  if (defined $self->{auto_nbsp_flag1} and length $self->{auto_nbsp_flag1}) {
-    $string[0] = $self->{nbsp_flag}.$string[0];
-  }
-  # auto_nbsp_flag2
-  if (@string > 1 and defined $self->{auto_nbsp_flag2} and length $self->{auto_nbsp_flag2}) {
-    $string[1] = $self->{nbsp_flag}.$string[1];
+  if (defined $self->{nbsp_flag})
+  { # auto_nbsp_flag1
+    if (defined $self->{auto_nbsp_flag1} and length $self->{auto_nbsp_flag1}) {
+      $string[0] = $self->{nbsp_flag}.$string[0];
+    }
+    # auto_nbsp_flag2
+    if (@string > 1 and defined $self->{auto_nbsp_flag2} and length $self->{auto_nbsp_flag2}) {
+      $string[1] = $self->{nbsp_flag}.$string[1];
+    }
   }
   eval {
     $_ = $self->{L10N}->quant($number, @string);
