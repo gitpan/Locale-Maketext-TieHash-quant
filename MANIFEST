@@ -1,0 +1,17 @@
+Build.PL
+Changes
+example/01_without_tie_L10N.pm
+example/02_with_tie_L10N.pm
+example/lib/MyProgram/L10N.pm
+example/lib/MyProgram/L10N/de.pm
+lib/Locale/Maketext/TieHash/quant.pm
+MANIFEST			This list of files
+README
+t/01_basics.t
+t/chars.t
+t/perl_critic.t
+t/pod.t
+t/pod_coverage.t
+t/prereq_build.t
+Makefile.PL
+META.yml

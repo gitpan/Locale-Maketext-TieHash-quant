@@ -1,12 +1,29 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Locale-Maketext-TieHash-quant
-version:      0.04
-version_from: lib/Locale/Maketext/TieHash/quant.pm
-installdirs:  site
+---
+name: Locale-Maketext-TieHash-quant
+version: 0.05
+author:
+  - 'Steffen Winkler <steffenw at cpan.org>'
+abstract: 'Locale::Maketext::TieHash::quant - Tying method quant to a hash'
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
 requires:
-    Locale::Maketext:              1.06
-    Test::More:                    0.47
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  Params::Validate: 0
+  perl: 5.006001
+build_requires:
+  Test::Exception: 0
+  Test::NoWarnings: 0
+  Test::Simple: 0
+  parent: 0
+recommends:
+  Test::More: 0
+  Test::Pod: 1.14
+  Test::Pod::Coverage: 1.04
+provides:
+  Locale::Maketext::TieHash::quant:
+    file: lib/Locale/Maketext/TieHash/quant.pm
+    version: 0.05
+generated_by: Module::Build version 0.33
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4

@@ -1,21 +1,26 @@
 Revision history for Perl extension Locale::Maketext::TieHash::quant.
 
-0.01  Fri Dec 31 08:27:13 2004
-	- original version; created by h2xs 1.23 with options
-		-XA -n Locale::Maketext::TieHash::quant
-
-0.02  Sun Jan  9 21:45:01 2005
-	- only pod-documentation is expanded
-
-0.03  Wed Jan 12 23:17:15 2005
-	- Method FETCH
-          Error fixed:
-          - option nbsp_flag is undef
-          - option auto_nbsp_flag1 and/or auto_nbsp_flag2 ist true
+0.05  Wed Jun 10 07:21:48 2009
+- Build with Module::Build now
+- perlcritic
+- add example folder
+- repair examples in synopsis
 
 0.04  Sun Feb 13 14:11:00 2005
-	- new Method Config
-        - Methods deprecated
-          - STORE
-          - Get
+- new Method Config
+- Methods deprecated
+- STORE
+- Get
 
+0.03  Wed Jan 12 23:17:15 2005
+- Method FETCH
+- Error fixed:
+  - option nbsp_flag is undef
+  - option auto_nbsp_flag1 and/or auto_nbsp_flag2 ist true
+
+0.02  Sun Jan  9 21:45:01 2005
+- only pod-documentation is expanded
+
+0.01  Fri Dec 31 08:27:13 2004
+- original version; created by h2xs 1.23 with options
+  -XA -n Locale::Maketext::TieHash::quant

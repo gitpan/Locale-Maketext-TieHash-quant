@@ -1,7 +1,0 @@
-Changes
-Makefile.PL
-MANIFEST
-README
-t/Locale-Maketext-TieHash-quant.t
-lib/Locale/Maketext/TieHash/quant.pm
-META.yml                                 Module meta-data (added by MakeMaker)
