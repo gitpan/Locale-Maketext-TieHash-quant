@@ -1,11 +1,10 @@
-Locale-Maketext-TieHash-quant version 0.05
+Locale-Maketext-TieHash-quant version 0.06
 ==========================================
 
 Object methods like quant don't have interpreted into strings.
 The module ties the method quant to a hash.
 The object method quant is executed at fetch hash.
 At long last this is the same, only the notation is shorter.
-
 
 INSTALLATION
 
@@ -16,18 +15,28 @@ To install this module type the following:
    make test
    make install
 
+Alternatively, to install with Module::Build, you can use the following commands:
+
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build install
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Carp
-  Tie::Hash
-  Locale::Maketext
+    Carp
+    English
+    Params::Validate
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2004 - 2009 by Steffen Winkler
+Copyright (C) 2004 - 2010,
+Steffen Winkler
+steffenw at cpan.org.
+All rights reserved.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.6.1 or,
-at your option, any later version of Perl 5 you may have available.
+This module is free software;
+you can redistribute it and/or modify it
+under the same terms as Perl itself.

@@ -3,7 +3,7 @@ package Locale::Maketext::TieHash::quant; ## no critic (Capitalization)
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Carp qw(croak);
 use English qw(-no_match_vars $EVAL_ERROR);
@@ -122,7 +122,7 @@ Locale::Maketext::TieHash::quant - Tying method quant to a hash
 
 =head1 VERSION
 
-0.05
+0.06
 
 =head1 SYNOPSIS
 
@@ -303,7 +303,7 @@ Carp
 
 English
 
-L<Params::Validate>
+L<Params::Validate|Params::Validate>
 
 =head1 INCOMPATIBILITIES
 
@@ -315,11 +315,11 @@ not known
 
 =head1 SEE ALSO
 
-L<Tie::Hash>
+L<Tie::Hash|Tie::Hash>
 
-L<Locale::Maketext>
+L<Locale::Maketext|Locale::Maketext>
 
-L<Locale::Maketext::TieHash::L10N>
+L<Locale::Maketext::TieHash::L10N|Locale::Maketext::TieHash::L10N>
 
 =head1 AUTHOR
 
@@ -327,7 +327,7 @@ Steffen Winkler
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2004 - 2009,
+Copyright (c) 2004 - 2010,
 Steffen Winkler
 C<< <steffenw at cpan.org> >>.
 All rights reserved.

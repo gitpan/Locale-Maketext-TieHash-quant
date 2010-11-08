@@ -27,8 +27,12 @@ find(
         untaint         => 1,
         wanted          => sub {
             -d and return;
-            $File::Find::name =~ m{/ \.svn / | \.mo \z}xms
-                and return;
+            $File::Find::name =~ m{
+                / \.svn /
+                | / \.git /
+                | / \.gitignore \z
+                | \.mo \z
+            }xms and return;
             $File::Find::name !~ m{
                 (
                     (?: /lib/ | /example/ | /t/ )

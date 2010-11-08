@@ -1,5 +1,8 @@
 Revision history for Perl extension Locale::Maketext::TieHash::quant.
 
+0.13  Mon Nov  8 21:32:44 2010
+- change dependencies 56268 (SREZIC)
+
 0.05  Wed Jun 10 07:21:48 2009
 - Build with Module::Build now
 - perlcritic

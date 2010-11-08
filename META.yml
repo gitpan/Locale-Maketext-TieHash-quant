@@ -1,29 +1,35 @@
 ---
-name: Locale-Maketext-TieHash-quant
-version: 0.05
+abstract: 'Locale::Maketext::TieHash::quant - Tying method quant to a hash'
 author:
   - 'Steffen Winkler <steffenw at cpan.org>'
-abstract: 'Locale::Maketext::TieHash::quant - Tying method quant to a hash'
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-requires:
-  Params::Validate: 0
-  perl: 5.006001
 build_requires:
+  Cwd: 0
+  Locale::Maketext: 1.17
   Test::Exception: 0
+  Test::More: 0
   Test::NoWarnings: 0
   Test::Simple: 0
   parent: 0
-recommends:
-  Test::More: 0
-  Test::Pod: 1.14
-  Test::Pod::Coverage: 1.04
-provides:
-  Locale::Maketext::TieHash::quant:
-    file: lib/Locale/Maketext/TieHash/quant.pm
-    version: 0.05
-generated_by: Module::Build version 0.33
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3607'
+license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
+name: Locale-Maketext-TieHash-quant
+provides:
+  Locale::Maketext::TieHash::quant:
+    file: lib/Locale/Maketext/TieHash/quant.pm
+    version: 0.06
+recommends:
+  Test::Pod: 1.14
+  Test::Pod::Coverage: 1.04
+requires:
+  Carp: 0
+  English: 0
+  Params::Validate: 0
+  perl: 5.006
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.06
